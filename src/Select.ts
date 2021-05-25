@@ -12,7 +12,6 @@ export class Select extends Widget {
 	options: SelectOption[] = [];
 
 	protected firstDraw = true;
-	protected origCursorPos = { x: 0, y: 0 };
 
 	constructor(
 		terminal: Terminal,
@@ -32,8 +31,6 @@ export class Select extends Widget {
 	}
 
 	async start(): Promise<any> {
-		this.origCursorPos = await this.terminal.getCursor();
-
 		return new Promise((resolve) => {
 			const rl = createInterface({ input: this.terminal.stdin, escapeCodeTimeout: 50 });
 			emitKeypressEvents(this.terminal.stdin, rl);
@@ -67,16 +64,6 @@ export class Select extends Widget {
 	}
 
 	async draw() {
-		// if (!this.firstDraw) {
-		// 	this.terminal.cursorTo(this.origCursorPos.x, this.origCursorPos.y);
-		// }
-		// else {
-		// 	this.terminal.getCursor().then((data) => {
-		// 		this.origCursorPos.x = data.x;
-		// 		this.origCursorPos.y = data.y;
-		// 	} );
-		// }
-
 		if (!this.firstDraw) {
 			await this.terminal.cursorTo(0);
 			await this.terminal.moveTo(0, -this.options.length + 1);
@@ -94,7 +81,7 @@ export class Select extends Widget {
 
 	moveChoice(dy: number) {
 		let idx = this.options.findIndex(o => o.selected);
-		let origIdx = idx;
+		const origIdx = idx;
 
 		idx += dy;
 		if (idx < 0) {

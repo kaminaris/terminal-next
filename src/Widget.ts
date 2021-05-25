@@ -1,13 +1,13 @@
-	import { Terminal }    from './Terminal';
+import { Terminal } from './Terminal';
 
 export abstract class Widget {
-	styles: {[name: string]: any} = {};
-	style: string = 'default';
+	styles: { [name: string]: any } = {};
+	style = 'default';
 
 	indent = 0;
 
 	constructor(
-		protected terminal: Terminal,
+		protected terminal: Terminal
 	) {
 	}
 
@@ -17,7 +17,7 @@ export abstract class Widget {
 
 	setStyle(style: string) {
 		if (typeof this.styles[style] === 'undefined') {
-			throw new Error(`Style '${style}' not found`)
+			throw new Error(`Style '${ style }' not found`);
 		}
 		this.style = style;
 	}

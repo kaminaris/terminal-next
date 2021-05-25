@@ -1,8 +1,7 @@
-import { Terminal }    from './Terminal';
-import { WriteStream } from 'tty';
+import { Terminal } from './Terminal';
 
 export class ProgressBar {
-	styles: {[name: string]: any} = {
+	styles: { [name: string]: any } = {
 		default: {
 			full: '\u2588',
 			empty: '\u2591'
@@ -33,7 +32,7 @@ export class ProgressBar {
 
 	setStyle(style: string) {
 		if (typeof this.styles[style] === 'undefined') {
-			throw new Error(`Style '${style}' not found`)
+			throw new Error(`Style '${ style }' not found`);
 		}
 		this.style = style;
 
