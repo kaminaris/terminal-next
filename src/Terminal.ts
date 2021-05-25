@@ -52,6 +52,28 @@ export class Terminal {
 		return this;
 	}
 
+	// Shortcodes for fg color
+	black(t: string) { return this.text(t, { fg: 'black' }); }
+	red(t: string) { return this.text(t, { fg: 'red' }); }
+	green(t: string) { return this.text(t, { fg: 'green' }); }
+	yellow(t: string) { return this.text(t, { fg: 'yellow' }); }
+	blue(t: string) { return this.text(t, { fg: 'blue' }); }
+	magenta(t: string) { return this.text(t, { fg: 'magenta' }); }
+	cyan(t: string) { return this.text(t, { fg: 'cyan' }); }
+	white(t: string) { return this.text(t, { fg: 'white' }); }
+	dim(t: string) { return this.text(t, { dim: true }); }
+	bright(t: string) { return this.text(t, { bright: true }); }
+
+	// Shortcodes for bg color
+	bgBlack(t: string) { return this.text(t, { bg: 'black' }); }
+	bgRed(t: string) { return this.text(t, { bg: 'red' }); }
+	bgGreen(t: string) { return this.text(t, { bg: 'green' }); }
+	bgYellow(t: string) { return this.text(t, { bg: 'yellow' }); }
+	bgBlue(t: string) { return this.text(t, { bg: 'blue' }); }
+	bgMagenta(t: string) { return this.text(t, { bg: 'magenta' }); }
+	bgCyan(t: string) { return this.text(t, { bg: 'cyan' }); }
+	bgWhite(t: string) { return this.text(t, { bg: 'white' }); }
+
 	space() {
 		return this.text(' ');
 	}
