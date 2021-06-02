@@ -1,15 +1,14 @@
 # Terminal Next
 
 ---
-![npm](https://img.shields.io/npm/v/terminal-next)
-![node-current](https://img.shields.io/node/v/terminal-next)
-
 Next gen terminal helper, slim, extensible, easy to use.
 Fully promise based, callbacks are not a thing anymore.
 Some widgets do not support non-tty terminals.
 
 Zero dependencies.
 
+![npm](https://img.shields.io/npm/v/terminal-next)
+![node-current](https://img.shields.io/node/v/terminal-next)
 ---
 
 ## Requirements
@@ -20,7 +19,7 @@ Node v14+, cannot run in browser
 
 ## Docs
 
-[Read documentation here](https://github.com/kaminaris/terminal-next/docs/modules.md)
+[Read documentation here](https://github.com/kaminaris/terminal-next/blob/master/docs/modules.md)
 
 ---
 
