@@ -1,6 +1,38 @@
+import { Widget }   from './Widget';
 import { Terminal } from './Terminal';
 
-export class ProgressBar {
+/**
+ * ProgressBar widget, example
+ *
+ * ![](https://i.imgur.com/IYDxWBa.gif)
+ *
+ * ```ts
+ * const pb = new ProgressBar(t, 100);
+ * await pb.draw();
+ * let prog = 0;
+ * const itv = setInterval(async () => {
+ * 	await pb.setProgress(prog);
+ * 	prog++;
+ * 	if (prog > 100) {
+ * 		clearInterval(itv);
+ * 	}
+ * }, 50);
+ * ```
+ *
+ * Built in styles: default, text
+ *
+ * Style definition:
+ * ```ts
+ * styleName: {
+ * 	full: '\u2588',
+ * 	empty: '\u2591'
+ * }
+ * ```
+ */
+export class ProgressBar extends Widget {
+	/**
+	 * You can override style of this widget by executing functions `addStyle` and `setStyle`
+	 */
 	styles: { [name: string]: any } = {
 		default: {
 			full: '\u2588',
@@ -12,37 +44,44 @@ export class ProgressBar {
 		}
 	};
 
-	indent = 0;
+	/**
+	 * Starting character, before the progressbar itself
+	 */
 	startChar = '[';
+	/**
+	 * Ending character, after progressbar
+	 */
 	endChar = ']';
 
+	/**
+	 * Creates new ProgressBar instance
+	 *
+	 * @param terminal Terminal instance
+	 * @param max maximum numerical progress
+	 * @param progress current numerical progress
+	 * @param width character width
+	 * @param text text to display after progressbar
+	 */
 	constructor(
-		protected terminal: Terminal,
+		terminal: Terminal,
 		protected max: number,
 		protected progress: number = 0,
 		protected width: number = 40,
-		protected text: string = '',
-		protected style: string = 'default'
+		protected text: string = ''
 	) {
+		super(terminal);
 	}
 
-	get styleDef() {
-		return this.styles[this.style];
-	}
-
-	setStyle(style: string) {
-		if (typeof this.styles[style] === 'undefined') {
-			throw new Error(`Style '${ style }' not found`);
-		}
-		this.style = style;
-
-		return this;
-	}
-
+	/**
+	 * Calculate current progress width based on progress, max and progressbar width
+	 */
 	calculateProgress() {
 		return Math.ceil(this.progress * this.width / this.max);
 	}
 
+	/**
+	 * Execute the widget
+	 */
 	async draw() {
 		this.terminal.hideCursor();
 		this.terminal.clearLine();
@@ -64,6 +103,11 @@ export class ProgressBar {
 			.text(this.text);
 	}
 
+	/**
+	 * Sets the current progress and draws progressbar
+	 *
+	 * @param progress
+	 */
 	async setProgress(progress: number) {
 		this.progress = progress;
 		await this.draw();

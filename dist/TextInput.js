@@ -4,7 +4,25 @@ exports.TextInput = void 0;
 const readline_1 = require("readline");
 const Action_1 = require("./Action");
 const Widget_1 = require("./Widget");
+/**
+ * TextInput widget, example:
+ *
+ * ![](https://i.imgur.com/ikCwe6n.png)
+ *
+ * ```ts
+ * const ti = new TextInput(t, 'Your name?');
+ * const answ = await ti.start();
+ * t.text(answ);
+ * ```
+ */
 class TextInput extends Widget_1.Widget {
+    /**
+     * Create TextInput widget
+     *
+     * @param terminal {@link Terminal} instance
+     * @param question question to ask
+     * @param validator custom validator that can deny the value is conditions are not met
+     */
     constructor(terminal, question, validator) {
         super(terminal);
         this.question = question;
@@ -12,9 +30,17 @@ class TextInput extends Widget_1.Widget {
         this.answer = '';
         this.cursorAt = 0;
     }
+    /**
+     * Sets the validator
+     *
+     * @param validator
+     */
     setValidator(validator) {
         this.validator = validator;
     }
+    /**
+     * Execute the widget
+     */
     async start() {
         return new Promise((resolve) => {
             this.rlInterface = readline_1.createInterface({ input: this.terminal.stdin, escapeCodeTimeout: 50 });
@@ -63,6 +89,11 @@ class TextInput extends Widget_1.Widget {
             this.draw();
         });
     }
+    /**
+     * keypress input handler
+     *
+     * @ignore
+     */
     left() {
         if (this.cursorAt <= 0) {
             return;
@@ -70,6 +101,11 @@ class TextInput extends Widget_1.Widget {
         this.cursorAt--;
         this.terminal.moveTo(-1);
     }
+    /**
+     * keypress input handler
+     *
+     * @ignore
+     */
     right() {
         if (this.cursorAt >= this.answer.length) {
             return;
@@ -77,6 +113,11 @@ class TextInput extends Widget_1.Widget {
         this.cursorAt++;
         this.terminal.moveTo(1);
     }
+    /**
+     * keypress input handler
+     *
+     * @ignore
+     */
     home() {
         if (this.cursorAt <= 0) {
             return;
@@ -84,6 +125,11 @@ class TextInput extends Widget_1.Widget {
         this.cursorAt = 0;
         this.terminal.cursorTo(this.question.length + 1);
     }
+    /**
+     * keypress input handler
+     *
+     * @ignore
+     */
     end() {
         if (this.cursorAt >= this.answer.length) {
             return;
@@ -92,6 +138,11 @@ class TextInput extends Widget_1.Widget {
         this.cursorAt = maxCursor;
         this.terminal.cursorTo(maxCursor);
     }
+    /**
+     * keypress input handler
+     *
+     * @ignore
+     */
     backspace() {
         if (this.answer.length === 0 || this.cursorAt <= 0) {
             return;
@@ -102,6 +153,11 @@ class TextInput extends Widget_1.Widget {
         this.cursorAt--;
         this.draw();
     }
+    /**
+     * keypress input handler
+     *
+     * @ignore
+     */
     delete() {
         if (this.answer.length === 0 || this.cursorAt >= this.answer.length) {
             return;
@@ -111,6 +167,11 @@ class TextInput extends Widget_1.Widget {
         this.answer = s1 + s2;
         this.draw();
     }
+    /**
+     * keypress input handler
+     *
+     * @ignore
+     */
     write(k) {
         if (!k || k.length < 1) {
             return;
@@ -122,6 +183,9 @@ class TextInput extends Widget_1.Widget {
         this.hasError = false;
         this.draw();
     }
+    /**
+     * Close the widget
+     */
     close() {
         this.terminal.setRawMode(false);
         this.terminal.stdin.removeListener('keypress', this.keypress);
@@ -129,6 +193,9 @@ class TextInput extends Widget_1.Widget {
         this.terminal.newline();
         this.rlInterface.close();
     }
+    /**
+     * Draw the widget
+     */
     draw() {
         this.terminal.cursorTo(0);
         this.terminal.text(this.question, { fg: this.hasError ? 'red' : 'cyan' }).space();

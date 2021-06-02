@@ -1,7 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Action = void 0;
+/**
+ * Simple class used to determine if key press was action or just a normal key
+ */
 class Action {
+    /**
+     * Determine if key is action, if so, return normalized action name
+     *
+     * @param key
+     */
     static actionName(key) {
         if (key.meta && key.name !== 'escape') {
             return false;

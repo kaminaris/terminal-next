@@ -2,6 +2,9 @@ import { TextFormatOptions } from './Interface/TextFormatOptions';
 import { Terminal }          from './Terminal';
 import { Widget }            from './Widget';
 
+/**
+ * Internal table row class
+ */
 export class TableRow {
 	cells: TableCell[] = [];
 	isLast: boolean;
@@ -18,16 +21,51 @@ export class TableRow {
 	}
 }
 
+/**
+ * Internal table cell class
+ */
 export class TableCell {
 	width: number;
 	maxWidth: number;
 	isLast: boolean;
 	isFirst: boolean;
+	public data: string;
 
-	constructor(public data: string) {}
+	constructor(data: string) {
+		if (typeof data === 'string') {
+			this.data = data;
+			return;
+		}
+
+		if ((data as any).toString) {
+			this.data = (data as any).toString();
+		}
+
+		throw new Error('Table Cell data is not a string nor can be transformed to string');
+	}
 }
 
+/**
+ * Main table widget, example usage:
+ *
+ * ![](https://i.imgur.com/6VAWTJo.png)
+ *
+ * ```ts
+ * const data = [
+ * 	['id', 'name', 'email', 'active', 'banned'],
+ * 	['1', 'Marian', 'mtest@tst.com', 'true', 'false'],
+ * 	['2', 'Adam', 'adam@gmail.com', 'true', 'true'],
+ * 	['3', 'Gertruda', 'g.rtruda@wp.pl', 'false', 'false']
+ * ];
+ * const table = new Table(t);
+ * table.setData(data);
+ * table.draw();
+ * ```
+ */
 export class Table extends Widget {
+	/**
+	 * Table has pretty advanced styles, open up the class if you wish to define style yourself
+	 */
 	styles = {
 		default: {
 			lt: '┌',
@@ -51,10 +89,20 @@ export class Table extends Widget {
 		}
 	};
 
+	/**
+	 * Internal table rows, you can technically set this yourself however you will need to properly construct
+	 * TableRow
+	 */
 	rows: TableRow[] = [];
-	headerTextStyle: TextFormatOptions = {bright: true, fg: 'cyan'};
-	textStyle: TextFormatOptions = {dim: true};
+	headerTextStyle: TextFormatOptions = { bright: true, fg: 'cyan' };
+	textStyle: TextFormatOptions = { dim: true };
 
+	/**
+	 * Creates table widget
+	 *
+	 * @param terminal {@link Terminal} instance
+	 * @param maxWidth should table not expand after maximum terminal width [NYI]
+	 */
 	constructor(
 		terminal: Terminal,
 		protected maxWidth = false
@@ -62,14 +110,28 @@ export class Table extends Widget {
 		super(terminal);
 	}
 
+	/**
+	 * Set header text style
+	 *
+	 * @param style
+	 */
 	setHeaderTextStyle(style: TextFormatOptions) {
 		this.headerTextStyle = style;
 	}
 
+	/**
+	 * Sets content text style
+	 * @param style
+	 */
 	setTextStyle(style: TextFormatOptions) {
 		this.textStyle = style;
 	}
 
+	/**
+	 * Sets the data for table, first row will be treated as header
+	 *
+	 * @param data
+	 */
 	setData(data: any[][]) {
 		const rows: TableRow[] = [];
 
@@ -86,6 +148,9 @@ export class Table extends Widget {
 		return this;
 	}
 
+	/**
+	 * Recalculate widths of columns
+	 */
 	calcWidths() {
 		const colMaxWidths: number[] = [];
 		for (const row of this.rows) {
@@ -106,6 +171,11 @@ export class Table extends Widget {
 		}
 	}
 
+	/**
+	 * Draw the row
+	 *
+	 * @internal
+	 */
 	protected drawRow(row: TableRow, leftChar: string, rightChar: string, middleChar: string) {
 		for (const cell of row.cells) {
 			if (cell.isFirst) {
@@ -127,7 +197,11 @@ export class Table extends Widget {
 			}
 		}
 	}
-
+	/**
+	 * Draw divider
+	 *
+	 * @internal
+	 */
 	protected drawDivider(row: TableRow, leftChar: string, rightChar: string, middleChar: string, fill: string) {
 		for (const cell of row.cells) {
 			if (cell.isFirst) {
@@ -145,6 +219,9 @@ export class Table extends Widget {
 		}
 	}
 
+	/**
+	 * Draws the table
+	 */
 	draw() {
 		const style = this.styleDef;
 
@@ -165,5 +242,4 @@ export class Table extends Widget {
 		}
 		return this;
 	}
-
 }

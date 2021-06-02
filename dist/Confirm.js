@@ -4,7 +4,25 @@ exports.Confirm = void 0;
 const readline_1 = require("readline");
 const Action_1 = require("./Action");
 const Widget_1 = require("./Widget");
+/**
+ * Boolean confirmation in terminal, returns false/true, example:
+ *
+ * ```ts
+ * const ti = new Confirm(t, 'Super?');
+ * const answ = await ti.start();
+ * t.text(answ.toString()).newline();
+ * ```
+ */
 class Confirm extends Widget_1.Widget {
+    /**
+     * Creates new confirmation widget
+     *
+     * @param terminal instance of Terminal
+     * @param question question you wish to ask
+     * @param yesDefault if set to true, yes (true) will be default (on enter press)
+     * @param yes character that will act as true response, this has to be a single letter
+     * @param no character that will act as false response, this has to be a single letter
+     */
     constructor(terminal, question, yesDefault = true, yes = 'y', no = 'n') {
         super(terminal);
         this.question = question;
@@ -17,6 +35,10 @@ class Confirm extends Widget_1.Widget {
             throw new Error('Confirm requires one letter yes/no');
         }
     }
+    /**
+     * Execute the widget, this will stop terminal and wait for keypress, resolves the promise to true false or null
+     * null if action was canceled by pressing escape or abort keyboard command
+     */
     async start() {
         return new Promise((resolve) => {
             this.rlInterface = readline_1.createInterface({ input: this.terminal.stdin, escapeCodeTimeout: 50 });
@@ -47,6 +69,9 @@ class Confirm extends Widget_1.Widget {
             this.draw();
         });
     }
+    /**
+     * @ignore
+     */
     check(str) {
         if (str.toLowerCase() === this.yes.toLowerCase()) {
             return true;
@@ -56,6 +81,9 @@ class Confirm extends Widget_1.Widget {
         }
         return null;
     }
+    /**
+     * @ignore
+     */
     close() {
         this.terminal.setRawMode(false);
         this.terminal.stdin.removeListener('keypress', this.keypress);
@@ -63,6 +91,9 @@ class Confirm extends Widget_1.Widget {
         this.terminal.newline();
         this.rlInterface.close();
     }
+    /**
+     * Draws the widget, not advised to run manually
+     */
     draw() {
         this.terminal.cursorTo(0);
         this.terminal.text(this.question, { fg: 'cyan' }).space();

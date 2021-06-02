@@ -7,14 +7,18 @@ const t = new Terminal(process.stdout, process.stdin);
 	t.clear();
 
 	const spinner = new Spinner(t, 'test');
-	setTimeout(async ()=> {
-		await spinner.setText('new text');
+	setTimeout(()=> {
+		spinner.setText('new text');
 	}, 1000);
-	const itv = setInterval(async () => {
-		await spinner.draw();
+	const itv = setInterval(() => {
+		spinner.draw();
 	}, 100);
 	setTimeout(()=> {
 		clearInterval(itv);
+		// important, in order to stop terminal from flickering,
+		// show cursor after this is done
+		t.showCursor();
 	}, 3000);
+
 
 })();

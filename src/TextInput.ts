@@ -3,6 +3,17 @@ import { Action }                                              from './Action';
 import { Terminal }                                            from './Terminal';
 import { Widget }                                              from './Widget';
 
+/**
+ * TextInput widget, example:
+ *
+ * ![](https://i.imgur.com/ikCwe6n.png)
+ *
+ * ```ts
+ * const ti = new TextInput(t, 'Your name?');
+ * const answ = await ti.start();
+ * t.text(answ);
+ * ```
+ */
 export class TextInput extends Widget {
 	protected hasError: boolean;
 	protected answer = '';
@@ -10,6 +21,13 @@ export class TextInput extends Widget {
 	protected keypress: any;
 	protected rlInterface: Interface;
 
+	/**
+	 * Create TextInput widget
+	 *
+	 * @param terminal {@link Terminal} instance
+	 * @param question question to ask
+	 * @param validator custom validator that can deny the value is conditions are not met
+	 */
 	constructor(
 		terminal: Terminal,
 		protected question: string,
@@ -18,10 +36,18 @@ export class TextInput extends Widget {
 		super(terminal);
 	}
 
+	/**
+	 * Sets the validator
+	 *
+	 * @param validator
+	 */
 	setValidator(validator: (v: string) => boolean) {
 		this.validator = validator;
 	}
 
+	/**
+	 * Execute the widget
+	 */
 	async start(): Promise<any> {
 		return new Promise((resolve) => {
 			this.rlInterface = createInterface({ input: this.terminal.stdin, escapeCodeTimeout: 50 });
@@ -74,6 +100,11 @@ export class TextInput extends Widget {
 		});
 	}
 
+	/**
+	 * keypress input handler
+	 *
+	 * @ignore
+	 */
 	left() {
 		if (this.cursorAt <= 0) {
 			return;
@@ -83,6 +114,11 @@ export class TextInput extends Widget {
 		this.terminal.moveTo(-1);
 	}
 
+	/**
+	 * keypress input handler
+	 *
+	 * @ignore
+	 */
 	right() {
 		if (this.cursorAt >= this.answer.length) {
 			return;
@@ -92,6 +128,11 @@ export class TextInput extends Widget {
 		this.terminal.moveTo(1);
 	}
 
+	/**
+	 * keypress input handler
+	 *
+	 * @ignore
+	 */
 	home() {
 		if (this.cursorAt <= 0) {
 			return;
@@ -101,6 +142,11 @@ export class TextInput extends Widget {
 		this.terminal.cursorTo(this.question.length + 1);
 	}
 
+	/**
+	 * keypress input handler
+	 *
+	 * @ignore
+	 */
 	end() {
 		if (this.cursorAt >= this.answer.length) {
 			return;
@@ -111,6 +157,11 @@ export class TextInput extends Widget {
 		this.terminal.cursorTo(maxCursor);
 	}
 
+	/**
+	 * keypress input handler
+	 *
+	 * @ignore
+	 */
 	backspace() {
 		if (this.answer.length === 0 || this.cursorAt <= 0) {
 			return;
@@ -125,6 +176,11 @@ export class TextInput extends Widget {
 		this.draw();
 	}
 
+	/**
+	 * keypress input handler
+	 *
+	 * @ignore
+	 */
 	delete() {
 		if (this.answer.length === 0 || this.cursorAt >= this.answer.length) {
 			return;
@@ -137,6 +193,11 @@ export class TextInput extends Widget {
 		this.draw();
 	}
 
+	/**
+	 * keypress input handler
+	 *
+	 * @ignore
+	 */
 	write(k: string) {
 		if (!k || k.length < 1) {
 			return;
@@ -150,6 +211,9 @@ export class TextInput extends Widget {
 		this.draw();
 	}
 
+	/**
+	 * Close the widget
+	 */
 	close() {
 		this.terminal.setRawMode(false);
 		this.terminal.stdin.removeListener('keypress', this.keypress);
@@ -158,6 +222,9 @@ export class TextInput extends Widget {
 		this.rlInterface.close();
 	}
 
+	/**
+	 * Draw the widget
+	 */
 	draw() {
 		this.terminal.cursorTo(0);
 

@@ -1,5 +1,15 @@
+import { Key } from 'readline';
+
+/**
+ * Simple class used to determine if key press was action or just a normal key
+ */
 export class Action {
-	static actionName(key) {
+	/**
+	 * Determine if key is action, if so, return normalized action name
+	 *
+	 * @param key
+	 */
+	static actionName(key: Key) {
 		if (key.meta && key.name !== 'escape') {
 			return false;
 		}

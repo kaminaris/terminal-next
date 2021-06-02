@@ -2,6 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Table = exports.TableCell = exports.TableRow = void 0;
 const Widget_1 = require("./Widget");
+/**
+ * Internal table row class
+ */
 class TableRow {
     constructor() {
         this.cells = [];
@@ -16,16 +19,52 @@ class TableRow {
     }
 }
 exports.TableRow = TableRow;
+/**
+ * Internal table cell class
+ */
 class TableCell {
     constructor(data) {
-        this.data = data;
+        if (typeof data === 'string') {
+            this.data = data;
+            return;
+        }
+        if (data.toString) {
+            this.data = data.toString();
+        }
+        throw new Error('Table Cell data is not a string nor can be transformed to string');
     }
 }
 exports.TableCell = TableCell;
+/**
+ * Main table widget, example usage:
+ *
+ * ![](https://i.imgur.com/6VAWTJo.png)
+ *
+ * ```ts
+ * const data = [
+ * 	['id', 'name', 'email', 'active', 'banned'],
+ * 	['1', 'Marian', 'mtest@tst.com', 'true', 'false'],
+ * 	['2', 'Adam', 'adam@gmail.com', 'true', 'true'],
+ * 	['3', 'Gertruda', 'g.rtruda@wp.pl', 'false', 'false']
+ * ];
+ * const table = new Table(t);
+ * table.setData(data);
+ * table.draw();
+ * ```
+ */
 class Table extends Widget_1.Widget {
+    /**
+     * Creates table widget
+     *
+     * @param terminal {@link Terminal} instance
+     * @param maxWidth should table not expand after maximum terminal width [NYI]
+     */
     constructor(terminal, maxWidth = false) {
         super(terminal);
         this.maxWidth = maxWidth;
+        /**
+         * Table has pretty advanced styles, open up the class if you wish to define style yourself
+         */
         this.styles = {
             default: {
                 lt: '┌',
@@ -45,16 +84,34 @@ class Table extends Widget_1.Widget {
                 b: '─'
             }
         };
+        /**
+         * Internal table rows, you can technically set this yourself however you will need to properly construct
+         * TableRow
+         */
         this.rows = [];
         this.headerTextStyle = { bright: true, fg: 'cyan' };
         this.textStyle = { dim: true };
     }
+    /**
+     * Set header text style
+     *
+     * @param style
+     */
     setHeaderTextStyle(style) {
         this.headerTextStyle = style;
     }
+    /**
+     * Sets content text style
+     * @param style
+     */
     setTextStyle(style) {
         this.textStyle = style;
     }
+    /**
+     * Sets the data for table, first row will be treated as header
+     *
+     * @param data
+     */
     setData(data) {
         const rows = [];
         for (let rowI = 0; rowI < data.length; rowI++) {
@@ -68,6 +125,9 @@ class Table extends Widget_1.Widget {
         this.calcWidths();
         return this;
     }
+    /**
+     * Recalculate widths of columns
+     */
     calcWidths() {
         const colMaxWidths = [];
         for (const row of this.rows) {
@@ -86,6 +146,11 @@ class Table extends Widget_1.Widget {
             }
         }
     }
+    /**
+     * Draw the row
+     *
+     * @internal
+     */
     drawRow(row, leftChar, rightChar, middleChar) {
         for (const cell of row.cells) {
             if (cell.isFirst) {
@@ -104,6 +169,11 @@ class Table extends Widget_1.Widget {
             }
         }
     }
+    /**
+     * Draw divider
+     *
+     * @internal
+     */
     drawDivider(row, leftChar, rightChar, middleChar, fill) {
         for (const cell of row.cells) {
             if (cell.isFirst) {
@@ -118,6 +188,9 @@ class Table extends Widget_1.Widget {
             }
         }
     }
+    /**
+     * Draws the table
+     */
     draw() {
         const style = this.styleDef;
         for (const row of this.rows) {

@@ -1,6 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Codes = void 0;
+/**
+ * Class that is used to group special terminal ansi codes, if you want to have support for custom codes,
+ * extend this class and override it in terminal like this:
+ *
+ * ```ts
+ * const t = new Terminal();
+ * t.codes = yourCustomCodesClassInstance;
+ * ```
+ */
 class Codes {
     constructor() {
         this.clear = '\x1Bc';
@@ -34,13 +43,32 @@ class Codes {
             ['white', '\x1b[47m']
         ]);
     }
+    /**
+     * Gets the color code for color name
+     *
+     * @param type either 'foreground' or 'background'
+     * @param name color name or rgb code
+     */
     getColorCode(type, name) {
         return typeof name === 'string' ? this[type].get(name) : this.getRgbCode(type, name);
     }
+    /**
+     * Adds the color to palette
+     *
+     * @param type either 'foreground' or 'background'
+     * @param name color name
+     * @param code color code or rgb code
+     */
     addColor(type, name, code) {
         this[type].set(name, typeof code === 'string' ? code : this.getRgbCode(type, code));
         return this;
     }
+    /**
+     * Gets the code for RGB color
+     *
+     * @param type either 'foreground' or 'background'
+     * @param code color code or rgb code
+     */
     getRgbCode(type, code) {
         const index = 16 + 36 * code.r + 6 * code.g + code.b;
         if (type === 'foreground') {

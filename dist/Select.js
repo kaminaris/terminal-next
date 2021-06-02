@@ -3,7 +3,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Select = void 0;
 const readline_1 = require("readline");
 const Widget_1 = require("./Widget");
+/**
+ * Basic select widget, example:
+ *
+ * ![](https://i.imgur.com/PUwIYkG.gif)
+ *
+ * ```ts
+ * const options = [
+ * 	{title: 'Option 1', value: '111'},
+ * 	{title: 'Option 2', value: '222'},
+ * 	{title: 'Some other option', value: '333'},
+ * ];
+ * const select = new Select(t, options);
+ * const result = await select.start();
+ * t.text('answer: ' + result);
+ * ```
+ */
 class Select extends Widget_1.Widget {
+    /**
+     * Creates select widget instance
+     *
+     * @param terminal {@link Terminal} instance
+     * @param options select options, simple `{title: string, value: any}` array
+     */
     constructor(terminal, options) {
         super(terminal);
         this.options = [];
@@ -16,6 +38,9 @@ class Select extends Widget_1.Widget {
         }
         this.options[0].selected = true;
     }
+    /**
+     * Execute widget, stop terminal and wait for user input
+     */
     async start() {
         return new Promise((resolve) => {
             const rl = readline_1.createInterface({ input: this.terminal.stdin, escapeCodeTimeout: 50 });
@@ -61,6 +86,9 @@ class Select extends Widget_1.Widget {
         }
         this.firstDraw = false;
     }
+    /**
+     * @ignore
+     */
     moveChoice(dy) {
         let idx = this.options.findIndex(o => o.selected);
         const origIdx = idx;
@@ -74,6 +102,9 @@ class Select extends Widget_1.Widget {
         this.options[origIdx].selected = false;
         this.options[idx].selected = true;
     }
+    /**
+     * Gets the selected option value
+     */
     getValue() {
         return this.options.find(o => o.selected).value;
     }

@@ -3,11 +3,29 @@ import { Action }                                              from './Action';
 import { Terminal }                                            from './Terminal';
 import { Widget }                                              from './Widget';
 
+/**
+ * Boolean confirmation in terminal, returns false/true, example:
+ *
+ * ```ts
+ * const ti = new Confirm(t, 'Super?');
+ * const answ = await ti.start();
+ * t.text(answ.toString()).newline();
+ * ```
+ */
 export class Confirm extends Widget {
 	protected keypress: any;
 	protected answer = true;
 	protected rlInterface: Interface;
 
+	/**
+	 * Creates new confirmation widget
+	 *
+	 * @param terminal instance of Terminal
+	 * @param question question you wish to ask
+	 * @param yesDefault if set to true, yes (true) will be default (on enter press)
+	 * @param yes character that will act as true response, this has to be a single letter
+	 * @param no character that will act as false response, this has to be a single letter
+	 */
 	constructor(
 		terminal: Terminal,
 		protected question: string,
@@ -23,6 +41,10 @@ export class Confirm extends Widget {
 		}
 	}
 
+	/**
+	 * Execute the widget, this will stop terminal and wait for keypress, resolves the promise to true false or null
+	 * null if action was canceled by pressing escape or abort keyboard command
+	 */
 	async start(): Promise<boolean|null> {
 		return new Promise((resolve) => {
 			this.rlInterface = createInterface({ input: this.terminal.stdin, escapeCodeTimeout: 50 });
@@ -56,6 +78,9 @@ export class Confirm extends Widget {
 		});
 	}
 
+	/**
+	 * @ignore
+	 */
 	check(str: string) {
 		if (str.toLowerCase() === this.yes.toLowerCase()) {
 			return true;
@@ -68,6 +93,9 @@ export class Confirm extends Widget {
 		return null;
 	}
 
+	/**
+	 * @ignore
+	 */
 	close() {
 		this.terminal.setRawMode(false);
 		this.terminal.stdin.removeListener('keypress', this.keypress);
@@ -76,6 +104,9 @@ export class Confirm extends Widget {
 		this.rlInterface.close();
 	}
 
+	/**
+	 * Draws the widget, not advised to run manually
+	 */
 	draw() {
 		this.terminal.cursorTo(0);
 
@@ -84,6 +115,5 @@ export class Confirm extends Widget {
 		const n = this.yesDefault ? this.no : this.no.toUpperCase();
 		this.terminal.text(`[${y}/${n}]`);
 		this.terminal.clearLine(1);
-
 	}
 }

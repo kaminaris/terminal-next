@@ -8,11 +8,33 @@ export interface SelectOption {
 	selected?: boolean;
 }
 
+/**
+ * Basic select widget, example:
+ *
+ * ![](https://i.imgur.com/PUwIYkG.gif)
+ *
+ * ```ts
+ * const options = [
+ * 	{title: 'Option 1', value: '111'},
+ * 	{title: 'Option 2', value: '222'},
+ * 	{title: 'Some other option', value: '333'},
+ * ];
+ * const select = new Select(t, options);
+ * const result = await select.start();
+ * t.text('answer: ' + result);
+ * ```
+ */
 export class Select extends Widget {
 	options: SelectOption[] = [];
 
 	protected firstDraw = true;
 
+	/**
+	 * Creates select widget instance
+	 *
+	 * @param terminal {@link Terminal} instance
+	 * @param options select options, simple `{title: string, value: any}` array
+	 */
 	constructor(
 		terminal: Terminal,
 		options: SelectOption[]
@@ -30,6 +52,9 @@ export class Select extends Widget {
 		this.options[0].selected = true;
 	}
 
+	/**
+	 * Execute widget, stop terminal and wait for user input
+	 */
 	async start(): Promise<any> {
 		return new Promise((resolve) => {
 			const rl = createInterface({ input: this.terminal.stdin, escapeCodeTimeout: 50 });
@@ -79,6 +104,9 @@ export class Select extends Widget {
 		this.firstDraw = false;
 	}
 
+	/**
+	 * @ignore
+	 */
 	moveChoice(dy: number) {
 		let idx = this.options.findIndex(o => o.selected);
 		const origIdx = idx;
@@ -95,6 +123,9 @@ export class Select extends Widget {
 		this.options[idx].selected = true;
 	}
 
+	/**
+	 * Gets the selected option value
+	 */
 	getValue() {
 		return this.options.find(o => o.selected).value;
 	}

@@ -3,9 +3,19 @@ import { TextFormatOptions }                          from './Interface/TextForm
 import { ReadStream, WriteStream }                    from 'tty';
 import { clearLine, cursorTo, moveCursor, Direction } from 'readline';
 
+/**
+ * Main terminal class that is mostly used for manipulating terminal streams
+ */
 export class Terminal {
+	/** @ignore */
 	codes = new Codes();
 
+	/**
+	 * Creates new instance of terminal
+	 *
+	 * @param stdout if not provided, process.stdout will be used
+	 * @param stdin if not provided, process.stdin will be used
+	 */
 	constructor(
 		public stdout?: WriteStream,
 		public stdin?: ReadStream
@@ -18,6 +28,13 @@ export class Terminal {
 		}
 	}
 
+	/**
+	 * Format text without outputting it to stdout
+	 *
+	 * @category Text
+	 * @param t text to format
+	 * @param options formatting options
+	 */
 	format(t: string, options?: TextFormatOptions) {
 		let output = '';
 		if (options?.bg) {
@@ -46,6 +63,13 @@ export class Terminal {
 		return output;
 	}
 
+	/**
+	 * Formats text and outputs it to stdout
+	 *
+	 * @category Text
+	 * @param t text to display
+	 * @param options formatting options
+	 */
 	text(t: string, options?: TextFormatOptions) {
 		this.stdout.write(this.format(t, options));
 
@@ -74,46 +98,97 @@ export class Terminal {
 	bgCyan(t: string) { return this.text(t, { bg: 'cyan' }); }
 	bgWhite(t: string) { return this.text(t, { bg: 'white' }); }
 
+	/**
+	 * Outputs a single space
+	 * @category Text
+	 */
 	space() {
 		return this.text(' ');
 	}
 
+	/**
+	 * Outputs a newline character \n
+	 * @category Text
+	 */
 	newline() {
 		this.stdout.write('\n');
 
 		return this;
 	}
 
+	/**
+	 * Clears the terminal
+	 * @category Terminal Control
+	 */
 	clear() {
 		this.stdout.write(this.codes.clear);
 	}
 
+	/**
+	 * Clears the line
+	 *
+	 * @category Terminal Control
+	 * @param dir
+	 */
 	clearLine(dir: Direction = 1) {
 		clearLine(this.stdout, dir);
 	}
 
+	/**
+	 * Moves cursor to absolute position
+	 *
+	 * @category Terminal Control
+	 * @param x
+	 * @param y
+	 */
 	cursorTo(x: number, y?: number) {
 		cursorTo(this.stdout, x, y);
 	}
 
+	/**
+	 * Moves cursor to relative position
+	 *
+	 * @category Terminal Control
+	 * @param dx
+	 * @param dy
+	 */
 	moveTo(dx: number, dy?: number) {
 		moveCursor(this.stdout, dx, dy);
 	}
 
+	/**
+	 * Hides cursor
+	 * @category Terminal Control
+	 */
 	hideCursor() {
 		this.stdout.write('\x1B[?25l');
 	}
 
+	/**
+	 * Shows cursor
+	 * @category Terminal Control
+	 */
 	showCursor() {
 		this.stdout.write('\x1B[?25h');
 	}
 
+	/**
+	 * Puts terminal in raw mode or disables raw mode, only TTY terminals supported
+	 *
+	 * @category Terminal Control
+	 * @param raw
+	 */
 	setRawMode(raw: boolean) {
 		if (this.stdin.isTTY) {
 			this.stdin.setRawMode(raw);
 		}
 	}
 
+	/**
+	 * Gets cursor position, not every terminal is supported, better to not rely on this as from test
+	 * It can be inconsistent
+	 * @category Terminal Control
+	 */
 	getCursor(): Promise<{ x: number; y: number }> {
 		// const rl = createInterface(this.stdin, this.stdout);
 		// const pos = rl.getCursorPos();
