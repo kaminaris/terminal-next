@@ -31,14 +31,20 @@ export class TableCell {
 	isFirst: boolean;
 	public data: string;
 
-	constructor(data: string) {
+	constructor(data: any) {
 		if (typeof data === 'string') {
 			this.data = data;
 			return;
 		}
 
+		if (data instanceof Date) {
+			this.data = data.toISOString();
+			return;
+		}
+
 		if ((data as any).toString) {
 			this.data = (data as any).toString();
+			return;
 		}
 
 		throw new Error('Table Cell data is not a string nor can be transformed to string');

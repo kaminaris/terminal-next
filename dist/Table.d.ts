@@ -19,7 +19,7 @@ export declare class TableCell {
     isLast: boolean;
     isFirst: boolean;
     data: string;
-    constructor(data: string);
+    constructor(data: any);
 }
 /**
  * Main table widget, example usage:

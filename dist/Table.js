@@ -28,8 +28,13 @@ class TableCell {
             this.data = data;
             return;
         }
+        if (data instanceof Date) {
+            this.data = data.toISOString();
+            return;
+        }
         if (data.toString) {
             this.data = data.toString();
+            return;
         }
         throw new Error('Table Cell data is not a string nor can be transformed to string');
     }
